@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 24 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -33,22 +34,6 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -61,8 +46,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 24 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -79,23 +64,55 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-tubetunes-background text-tubetunes-text;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 21c3.3 0 10-6 10-12s-6-9-10-9v21zm10 0c-3.3 0-10-6-10-12s6-9 10-9' stroke='%23F97316' stroke-width='0.7' fill='none' fill-rule='evenodd' stroke-opacity='0.15' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat;
   }
+}
+
+@layer components {
+  .video-card-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-tubetunes-accent/20;
+  }
+  
+  .overlay-gradient {
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent;
+  }
+
+  .button-primary {
+    @apply bg-tubetunes-accent hover:bg-tubetunes-accent/80 text-white rounded-md px-4 py-2 transition-colors;
+  }
+  
+  .button-secondary {
+    @apply bg-tubetunes-secondary hover:bg-tubetunes-secondary/80 text-tubetunes-text rounded-md px-4 py-2 transition-colors;
+  }
+
+  .vote-button {
+    @apply flex items-center gap-1 p-1 rounded hover:bg-tubetunes-secondary transition-colors;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-tubetunes-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-tubetunes-accent/40 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-tubetunes-accent/60;
 }
