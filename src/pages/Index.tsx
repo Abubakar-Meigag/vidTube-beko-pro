@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import FeaturedVideo from '../components/FeaturedVideo';
 import VideoGrid from '../components/VideoGrid';
 import VideoPlayer from '../components/VideoPlayer';
@@ -18,21 +18,18 @@ const Index: React.FC = () => {
   const [searchFilter, setSearchFilter] = useState('');
   const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
   
-  // Auto-rotate when no video is selected
   useEffect(() => {
     if (!currentVideo && videos.length > 0) {
       const intervalId = setInterval(() => {
         const randomIndex = Math.floor(Math.random() * videos.length);
         setCurrentVideo(videos[randomIndex]);
-      }, 60000); // Change every 60 seconds
+      }, 60000);
       
       return () => clearInterval(intervalId);
     }
   }, [currentVideo, videos]);
   
-  // Local storage operations
   useEffect(() => {
-    // Load videos from local storage on mount
     const storedVideos = localStorage.getItem('tubeTunesVideos');
     if (storedVideos) {
       try {
@@ -43,13 +40,11 @@ const Index: React.FC = () => {
     }
   }, []);
   
-  // Save videos to local storage when they change
   useEffect(() => {
     localStorage.setItem('tubeTunesVideos', JSON.stringify(videos));
   }, [videos]);
 
   const handleAddVideo = (url: string, title: string) => {
-    // Extract YouTube ID
     const youtubeId = extractYouTubeId(url);
     
     if (!youtubeId) {
@@ -57,7 +52,6 @@ const Index: React.FC = () => {
       return;
     }
     
-    // Create new video object
     const newVideo: Video = {
       id: Date.now().toString(),
       title,
@@ -102,27 +96,23 @@ const Index: React.FC = () => {
   const handlePlayVideo = (video: Video) => {
     setCurrentVideo(video);
     
-    // Increment views
     setVideos(prev => 
       prev.map(v => 
         v.id === video.id ? { ...v, views: v.views + 1 } : v
       )
     );
     
-    // Scroll to top if on mobile
     if (window.innerWidth < 768) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
   
-  // Helper function to extract YouTube video ID from URL
   const extractYouTubeId = (url: string): string | null => {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[7].length === 11) ? match[7] : null;
   };
 
-  // Sort videos by views for featured section
   const featuredVideos = [...videos].sort((a, b) => b.views - a.views).slice(0, 4);
   
   return (
@@ -130,7 +120,6 @@ const Index: React.FC = () => {
       <Header onAddVideoClick={() => setIsAddVideoOpen(true)} />
       
       <main className="flex-1 container mx-auto px-4 pb-8">
-        {/* Featured Area */}
         <section className="mb-8">
           {currentVideo ? (
             <VideoPlayer currentVideo={currentVideo} />
@@ -139,7 +128,6 @@ const Index: React.FC = () => {
           )}
         </section>
         
-        {/* Search and Filter */}
         <section className="mb-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <h2 className="text-2xl font-bold text-tubetunes-text">Video Library</h2>
@@ -156,7 +144,6 @@ const Index: React.FC = () => {
           </div>
         </section>
         
-        {/* Spotlight Videos section */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-bold text-tubetunes-accent">SPOTLIGHT VIDEOS</h3>
@@ -178,7 +165,8 @@ const Index: React.FC = () => {
         </section>
       </main>
       
-      {/* Add Video Dialog */}
+      <Footer />
+      
       <AddVideoDialog
         isOpen={isAddVideoOpen}
         onClose={() => setIsAddVideoOpen(false)}
