@@ -1,16 +1,17 @@
 
 import React from 'react';
 import { Video } from '../types/video';
-import { ThumbsUp, ThumbsDown, Play, Trash } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Play, Trash, Trash2 } from 'lucide-react';
 import { formatNumber } from '../utils/formatNumber';
 import { cn } from '@/lib/utils';
+// import { Button } from '@/components/ui/button';
 
 interface VideoCardProps {
   video: Video;
   onPlay: (video: Video) => void;
-  onDelete: (id: string) => void;
-  onUpvote: (id: string) => void;
-  onDownvote: (id: string) => void;
+  onDelete: (id: number) => void;
+  onUpvote: (id: number) => void;
+  onDownvote: (id: number) => void;
   isHighlighted?: boolean;
   className?: string;
 }
@@ -35,7 +36,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
       <div className="relative">
         <img 
           src={video.thumbnailUrl} 
-          alt={video.title} 
+          alt={video.title}
           className="w-full aspect-video object-cover"
         />
         <div className="overlay-gradient" />
@@ -50,7 +51,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
         </button>
         
         <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs">
-          {formatNumber(video.views)} views
+          {formatNumber(video.views || 0)} views
         </div>
       </div>
 
@@ -66,7 +67,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
               aria-label="Upvote"
             >
               <ThumbsUp size={16} />
-              <span className="text-xs">{formatNumber(video.upvotes)}</span>
+              <span className="text-xs">{formatNumber(video.upvotes || 0)}</span>
             </button>
             <button 
               onClick={() => onDownvote(video.id)} 
@@ -74,7 +75,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
               aria-label="Downvote"
             >
               <ThumbsDown size={16} />
-              <span className="text-xs">{formatNumber(video.downvotes)}</span>
+              <span className="text-xs">{formatNumber(video.downvotes || 0)}</span>
             </button>
           </div>
           

@@ -6,115 +6,69 @@ import VideoGrid from '../components/VideoGrid';
 import VideoPlayer from '../components/VideoPlayer';
 import AddVideoDialog from '../components/AddVideoDialog';
 import { Video } from '../types/video';
-import { initialVideos } from '../data/initialVideos';
 import { Search, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useVideoContext } from '@/context/VideoContext';
 
 const Index: React.FC = () => {
-  const [videos, setVideos] = useState<Video[]>(initialVideos);
+  const { videos, addVideo, deleteVideo, upvoteVideo, downvoteVideo } = useVideoContext();
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [searchFilter, setSearchFilter] = useState('');
   const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
-  
-  useEffect(() => {
-    if (!currentVideo && videos.length > 0) {
-      const intervalId = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * videos.length);
-        setCurrentVideo(videos[randomIndex]);
-      }, 60000);
-      
-      return () => clearInterval(intervalId);
-    }
-  }, [currentVideo, videos]);
-  
-  useEffect(() => {
-    const storedVideos = localStorage.getItem('tubeTunesVideos');
-    if (storedVideos) {
-      try {
-        setVideos(JSON.parse(storedVideos));
-      } catch (error) {
-        console.error('Failed to parse stored videos:', error);
-      }
-    }
-  }, []);
-  
-  useEffect(() => {
-    localStorage.setItem('tubeTunesVideos', JSON.stringify(videos));
-  }, [videos]);
 
-  const handleAddVideo = (url: string, title: string) => {
-    const youtubeId = extractYouTubeId(url);
-    
-    if (!youtubeId) {
-      toast.error('Invalid YouTube URL');
-      return;
+  
+   // Set current video when videos are loaded
+   useEffect(() => {
+    if (videos.length > 0) {
+      setCurrentVideo(videos[0]);
     }
-    
-    const newVideo: Video = {
-      id: Date.now().toString(),
-      title,
-      youtubeId,
-      thumbnailUrl: `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`,
-      channelName: 'Added by User',
-      upvotes: 0,
-      downvotes: 0,
-      views: 0
-    };
-    
-    setVideos(prev => [newVideo, ...prev]);
-    toast.success('Video added successfully!');
-  };
+  }, [videos]);
   
-  const handleDeleteVideo = (id: string) => {
-    setVideos(prev => prev.filter(video => video.id !== id));
-    
-    if (currentVideo?.id === id) {
-      setCurrentVideo(null);
+  useEffect(() => {
+    if (!videos || videos.length === 0) return;
+
+    const intervalId = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * videos.length);
+      setCurrentVideo(videos[randomIndex]);
+    }, 60000);
+  
+    return () => clearInterval(intervalId);
+
+  }, [videos]);
+  
+    const handleAddVideo = async (url: string, title: string) => {
+    try {
+      await addVideo(title, url);
+      toast.success('Video added successfully!');
+      setIsAddVideoOpen(false);
+      window.location.href = "/"
+    } catch (error) {
+      toast.error('Failed to add video');
     }
-    
-    toast.success('Video deleted');
   };
   
-  const handleUpvote = (id: string) => {
-    setVideos(prev => 
-      prev.map(video => 
-        video.id === id ? { ...video, upvotes: video.upvotes + 1 } : video
-      )
-    );
+  const handleUpvote = (id: number) => {
+    upvoteVideo(id);
+    toast.success('Video liked');
   };
   
-  const handleDownvote = (id: string) => {
-    setVideos(prev => 
-      prev.map(video => 
-        video.id === id ? { ...video, downvotes: video.downvotes + 1 } : video
-      )
-    );
+  const handleDownvote = (id: number) => {
+       downvoteVideo(id);
+       toast.success('Video disliked');
   };
   
   const handlePlayVideo = (video: Video) => {
     setCurrentVideo(video);
-    
-    setVideos(prev => 
-      prev.map(v => 
-        v.id === video.id ? { ...v, views: v.views + 1 } : v
-      )
-    );
-    
+
     if (window.innerWidth < 768) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
-  
-  const extractYouTubeId = (url: string): string | null => {
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
-  };
 
-  const featuredVideos = [...videos].sort((a, b) => b.views - a.views).slice(0, 4);
-  
+  const featuredVideos = Array.isArray(videos) ? [...videos].sort((a, b) => b.views - a.views).slice(0, 4) : [];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header onAddVideoClick={() => setIsAddVideoOpen(true)} />
@@ -156,7 +110,7 @@ const Index: React.FC = () => {
           <VideoGrid
             videos={videos}
             onPlay={handlePlayVideo}
-            onDelete={handleDeleteVideo}
+            onDelete={deleteVideo}
             onUpvote={handleUpvote}
             onDownvote={handleDownvote}
             currentVideoId={currentVideo?.id}
@@ -174,6 +128,6 @@ const Index: React.FC = () => {
       />
     </div>
   );
-};
+  };
 
 export default Index;

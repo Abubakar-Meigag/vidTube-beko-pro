@@ -6,10 +6,10 @@ import VideoCard from './VideoCard';
 interface VideoGridProps {
   videos: Video[];
   onPlay: (video: Video) => void;
-  onDelete: (id: string) => void;
-  onUpvote: (id: string) => void;
-  onDownvote: (id: string) => void;
-  currentVideoId?: string;
+  onDelete: (id: number) => void;
+  onUpvote: (id: number) => void;
+  onDownvote: (id: number) => void;
+  currentVideoId?: number;
   filter?: string;
 }
 
@@ -22,16 +22,17 @@ const VideoGrid: React.FC<VideoGridProps> = ({
   currentVideoId,
   filter = ''
 }) => {
-  // Filter videos based on the search term
-  const filteredVideos = filter 
-    ? videos.filter(
-        video => 
-          video.title.toLowerCase().includes(filter.toLowerCase()) || 
-          video.channelName.toLowerCase().includes(filter.toLowerCase())
-      )
-    : videos;
 
-  if (filteredVideos.length === 0) {
+  // Filter videos based on the search term
+  const filteredVideos = filter
+  ? videos.filter(
+      video =>
+        video.title.toLowerCase().includes(filter.toLowerCase()) ||
+        video.channelName.toLowerCase().includes(filter.toLowerCase())
+    )
+  : videos;
+
+  if (!filteredVideos.length) {
     return (
       <div className="text-center py-8">
         <p className="text-tubetunes-muted">No videos found. Try a different filter.</p>
@@ -41,15 +42,15 @@ const VideoGrid: React.FC<VideoGridProps> = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {filteredVideos.map((video) => (
+      {filteredVideos.map((video, index) => (
         <VideoCard
-          key={video.id}
+          key={video.id || `video-${index}`}
           video={video}
           onPlay={onPlay}
-          onDelete={onDelete}
-          onUpvote={onUpvote}
-          onDownvote={onDownvote}
-          isHighlighted={video.id === currentVideoId}
+          onDelete={(id) => onDelete(id)}
+          onUpvote={(id) => onUpvote(id)}
+          onDownvote={(id) => onDownvote(id)}
+          isHighlighted={video.id === Number(currentVideoId)}
         />
       ))}
     </div>

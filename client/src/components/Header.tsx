@@ -11,7 +11,7 @@ const Header: React.FC<HeaderProps> = ({ onAddVideoClick }) => {
   return (
     <header className="w-full flex justify-between items-center p-4 z-10 relative">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-tubetunes-accent">TUBE TUNES</h1>
+        <h1 className="text-2xl font-bold text-tubetunes-accent">BEKO VidTube</h1>
       </div>
       <Button 
         onClick={onAddVideoClick}

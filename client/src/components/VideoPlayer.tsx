@@ -9,27 +9,26 @@ interface VideoPlayerProps {
   className?: string;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ currentVideo, autoplay = true, className = '' }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ currentVideo, autoplay = false, className = '' }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Reset iframe when video changes to force reload
+  const isValidYouTubeId = (id: string | undefined | null) => {
+    return typeof id === "string" && id.length === 11;
+  };
+
   useEffect(() => {
     if (iframeRef.current && currentVideo) {
       const iframe = iframeRef.current;
-      const parent = iframe.parentNode;
-      if (parent) {
-        iframe.src = `https://www.youtube.com/embed/${currentVideo.youtubeId}?autoplay=${autoplay ? 1 : 0}&mute=0`;
+      const videoId = currentVideo.youtubeId;
+
+      if (!isValidYouTubeId(videoId)) {
+        console.error('Invalid YouTube ID:', videoId);
+        return;
       }
+      
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&mute=0`; 
     }
   }, [currentVideo, autoplay]);
-
-  if (!currentVideo) {
-    return (
-      <div className={cn("bg-tubetunes-secondary rounded-lg flex items-center justify-center aspect-video", className)}>
-        <p className="text-tubetunes-muted">Select a video to play</p>
-      </div>
-    );
-  }
 
   return (
     <div className={cn("rounded-lg overflow-hidden relative", className)}>
@@ -37,18 +36,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ currentVideo, autoplay = true
         <iframe
           ref={iframeRef}
           className="w-full h-full"
-          src={`https://www.youtube.com/embed/${currentVideo.youtubeId}?autoplay=${autoplay ? 1 : 0}&mute=0`}
-          title={currentVideo.title}
+          src={`https://www.youtube.com/embed/${currentVideo.youtubeId}?autoplay=1&mute=0`}
+          title={currentVideo.title || 'Video Player'}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
       </div>
       
       <div className="p-4 bg-tubetunes-secondary">
-        <h2 className="text-xl font-bold mb-2">{currentVideo.title}</h2>
+        <h2 className="text-xl font-bold mb-2">{currentVideo.title || 'Untitled Video'}</h2>
         <div className="flex justify-between items-center">
-          <p className="text-tubetunes-muted">{currentVideo.channelName}</p>
-          <p className="text-tubetunes-muted text-sm">{currentVideo.views} views</p>
+          <p className="text-tubetunes-muted">{currentVideo.channelName || 'Unknown Channel'}</p>
+          <p className="text-tubetunes-muted text-sm">{currentVideo.views || 0} views</p>
         </div>
       </div>
     </div>
