@@ -33,4 +33,4 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync ./client/build s3://client-cloud-module-cyf --delete
+          aws s3 sync ./client/dist s3://client-cloud-module-cyf --delete
