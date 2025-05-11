@@ -25,7 +25,7 @@ interface VideoContextType {
 const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
 export const VideoProvider = ({ children }: { children: ReactNode }) => {
-  const apiBaseUrl = 'http://localhost:6006';
+  const apiBaseUrl = 'http://18.203.157.154:6006';
   const url = `${apiBaseUrl}/api/videos`;
 
   const [videos, setVideos] = useState<Video[]>([]);

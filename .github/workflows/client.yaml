@@ -34,3 +34,6 @@ jobs:
       - name: Deploy to S3
         run: |
           aws s3 sync ./client/dist s3://client-cloud-module-cyf --delete
+          
+# Syncs the built project (./client/dist) to an S3 bucket (client-cloud-module-cyf).
+# The --delete flag removes files in the bucket that are no longer in the local build.
