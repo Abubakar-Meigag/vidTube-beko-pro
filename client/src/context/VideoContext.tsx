@@ -25,7 +25,7 @@ interface VideoContextType {
 const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
 export const VideoProvider = ({ children }: { children: ReactNode }) => {
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6006';
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6006'; // command after is change the new ip in vite api ip for terraform
   const url = `${apiBaseUrl}/api/videos`;
 
   const [videos, setVideos] = useState<Video[]>([]);
